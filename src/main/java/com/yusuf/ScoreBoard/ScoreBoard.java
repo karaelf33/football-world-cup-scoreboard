@@ -2,36 +2,43 @@ package com.yusuf.ScoreBoard;
 
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ScoreBoard {
     private final Set<Game> gamesInScoreBoard = new HashSet<>();
 
-    public void addNewGameToScoreBoard(String homeTeam, String awayTeam) {
-        var newGame = new Game(homeTeam, awayTeam);
-        if (gamesInScoreBoard.contains(newGame)) {
-            throw new IllegalStateException("Game already exists: " + newGame.getId());
+    public Game addNewGameToScoreBoard(String homeTeam, String awayTeam) {
+        if (hasGameBetween(homeTeam, awayTeam)) {
+            throw new IllegalStateException(
+                    String.format("A game with teams '%s' vs '%s' already exists. " +
+                            "Are you sure you want to add another one?", homeTeam, awayTeam)
+            );
         }
-        gamesInScoreBoard.add(newGame);
+        var game = new Game(homeTeam, awayTeam);
+        gamesInScoreBoard.add(game);
+        return game;
     }
+
+    public boolean hasGameBetween(String homeTeam, String awayTeam) {
+        return gamesInScoreBoard.stream()
+                .anyMatch(game ->
+                        game.getHomeTeam().equalsIgnoreCase(homeTeam) &&
+                                game.getAwayTeam().equalsIgnoreCase(awayTeam)
+                );
+    }
+
 
     public void finishGame(String gameId) {
         Game gameForRemove = findGameById(gameId);
         gamesInScoreBoard.remove(gameForRemove);
     }
 
-    public void incrementHomeTeamScore(String gameId) {
-        Game gameForeUpdate = findGameById(gameId);
-        gameForeUpdate.incrementHomeScore();
+    public void updateScore(String gameId, int homeTeamScore, int awayTeamScore) {
+        Game gameForUpdate = findGameById(gameId);
+        gameForUpdate.updateHomeTeamScore(homeTeamScore);
+        gameForUpdate.updateAwayTeamScore(awayTeamScore);
     }
-
-    public void incrementAwayTeamScore(String gameId) {
-        Game gameForeUpdate = findGameById(gameId);
-        gameForeUpdate.incrementAwayScore();
-    }
-
 
     private Game findGameById(String gameId) {
         return gamesInScoreBoard.stream()
@@ -40,14 +47,14 @@ public class ScoreBoard {
                 .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameId));
     }
 
-    public Set<Game> getSummary() {
+    public List<Game> getSummary() {
         return gamesInScoreBoard
                 .stream()
                 .sorted(Comparator.comparingInt(Game::getTotalScore)
                         .reversed()
                         .thenComparing(Game::getStartTime)
 
-                ).collect(Collectors.toCollection(LinkedHashSet::new));
+                ).toList();
     }
 
 }

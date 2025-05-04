@@ -1,9 +1,9 @@
 package com.yusuf.ScoreBoard;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Game {
-    public final static String VsWithSpace = " VS ";
 
     private final String id;
     private final String homeTeam;
@@ -14,7 +14,7 @@ public class Game {
 
 
     public Game(String homeTeam, String awayTeam) {
-        this.id = homeTeam + VsWithSpace + awayTeam;
+        this.id = UUID.randomUUID().toString();
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.homeScore = 0;
@@ -46,18 +46,17 @@ public class Game {
         return startTime;
     }
 
-    public void incrementHomeScore() {
-        this.homeScore++;
+    public void updateHomeTeamScore(int newScore) {
+        this.homeScore = newScore;
     }
 
-    public void incrementAwayScore() {
-        this.awayScore++;
+    public void updateAwayTeamScore(int newScore) {
+        this.awayScore = newScore;
     }
 
     public int getTotalScore() {
         return getHomeTeamScore() + getAwayTeamScore();
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -65,10 +64,23 @@ public class Game {
         if (o == null || getClass() != o.getClass()) return false;
         var game = (Game) o;
 
-        return Objects.equals(getHomeTeam(), game.getHomeTeam()) && Objects.equals(getAwayTeam(), game.getAwayTeam());    }
+        return Objects.equals(getId(), game.getId());
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHomeTeam(), getAwayTeam());
+        return Objects.hash(getHomeTeam(), getAwayTeam(), getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id='" + id + '\'' +
+                ", homeTeam='" + homeTeam + '\'' +
+                ", awayTeam='" + awayTeam + '\'' +
+                ", homeScore=" + homeScore +
+                ", awayScore=" + awayScore +
+                ", startTime=" + startTime +
+                '}';
     }
 }
