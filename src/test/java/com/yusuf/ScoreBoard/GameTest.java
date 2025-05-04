@@ -26,6 +26,7 @@ class GameTest {
         var game = new Game(HOME_TEAM, AWAY_TEAM);
 
         game.updateHomeTeamScore(1);
+
         assertThat(game.getHomeTeamScore()).isEqualTo(1);
         assertThat(game.getAwayTeamScore()).isZero();
     }
@@ -35,6 +36,7 @@ class GameTest {
         var game = new Game(HOME_TEAM, AWAY_TEAM);
 
         game.updateAwayTeamScore(2);
+
         assertThat(game.getAwayTeamScore()).isEqualTo(2);
         assertThat(game.getHomeTeamScore()).isZero();
     }
@@ -46,9 +48,11 @@ class GameTest {
         assertThat(game.getTotalScore()).isZero();
 
         game.updateHomeTeamScore(1);
+
         assertThat(game.getTotalScore()).isEqualTo(1);
 
         game.updateAwayTeamScore(1);
+
         assertThat(game.getTotalScore()).isEqualTo(2);
     }
 
@@ -61,8 +65,6 @@ class GameTest {
 
         assertThat(game1).isNotEqualTo(game2);
         assertThat(game1.hashCode()).isNotEqualTo(game2.hashCode());
-
         assertThat(game1).isNotEqualTo(game3);
     }
-
 }
